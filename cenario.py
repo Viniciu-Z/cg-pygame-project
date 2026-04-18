@@ -1,19 +1,23 @@
-from funcoes import desenhar_poligono
+import pygame
+from funcoes import *
 
-# Cor padrão das mesas
-COR_MESA = (255, 255, 255)
+PRETO = (0, 0, 0)
+BRANCO = (255, 255, 255)
+CINZA = (150, 150, 150)
 
-# Dimensões
 LARGURA_MESA = 400
 ALTURA_MESA = 235
 
-# Posições
 MESAS = [
     (70, 70),
     (600, 70),
     (70, 410),
     (600, 410)
 ]
+
+# 🔥 superfície pré-renderizada
+cenario_surface = None
+
 
 def desenhar_mesa(superficie, x, y):
     pontos = [
@@ -23,9 +27,19 @@ def desenhar_mesa(superficie, x, y):
         (x, y + ALTURA_MESA)
     ]
 
-    desenhar_poligono(superficie, pontos, COR_MESA)
+    scanline_fill(superficie, pontos, CINZA)
+    desenhar_poligono(superficie, pontos, BRANCO)
 
 
-def desenhar_cenario(superficie):
+def criar_cenario(largura, altura):
+    global cenario_surface
+
+    cenario_surface = pygame.Surface((largura, altura)).convert()
+    cenario_surface.fill(PRETO)
+
     for (x, y) in MESAS:
-        desenhar_mesa(superficie, x, y)
+        desenhar_mesa(cenario_surface, x, y)
+
+
+def desenhar_cenario(tela):
+    tela.blit(cenario_surface, (0, 0))
