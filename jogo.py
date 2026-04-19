@@ -10,7 +10,7 @@ largura, altura = 1080, 720
 tela = pygame.display.set_mode((largura, altura))
 pygame.display.set_caption("Pac Dog")
 
-clock = pygame.time.Clock()
+relogio = pygame.time.Clock()
 
 PRETO = (0, 0, 0)
 
@@ -19,14 +19,14 @@ criar_cenario(largura, altura)
 
 rodando = True
 while rodando:
-    dt = clock.tick(60)   # tempo em segundos
+    relogio.tick(60)   # tempo em segundos
 
     for evento in pygame.event.get():
         if evento.type == pygame.QUIT:
             rodando = False
 
     teclas = pygame.key.get_pressed()
-    mover(teclas)
+    mover(teclas, largura, altura)
 
     # 🎨 desenho
     tela.fill(PRETO)
