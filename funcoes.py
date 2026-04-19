@@ -92,3 +92,16 @@ def scanline_fill(superficie, pontos, cor_preenchimento):
 
                 for x in range(x_inicio, x_fim + 1):
                     setPixel(superficie, x, y, cor_preenchimento)
+
+import math
+
+def gerar_elipse(xc, yc, rx, ry, passos=40):
+    pontos = []
+
+    for i in range(passos):
+        t = 2 * math.pi * i / passos
+        x = xc + rx * math.cos(t)
+        y = yc + ry * math.sin(t)
+        pontos.append((int(x), int(y)))
+
+    return pontos

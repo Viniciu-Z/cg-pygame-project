@@ -35,7 +35,7 @@ def criar_cenario(largura, altura):
     global cenario_surface
 
     cenario_surface = pygame.Surface((largura, altura)).convert()
-    cenario_surface.fill(PRETO)
+    cenario_surface.fill(BRANCO)
 
     for (x, y) in MESAS:
         desenhar_mesa(cenario_surface, x, y)

@@ -1,9 +1,10 @@
-from funcoes import desenhar_poligono, scanline_fill
+from funcoes import desenhar_poligono, scanline_fill, gerar_elipse
 from cenario import MESAS, LARGURA_MESA, ALTURA_MESA
 import pygame
 # Cores
 MARROM = (139, 69, 19)
 BRANCO = (255, 255, 255)
+PRETO = (0, 0, 0)
 
 # Tamanho
 TAMANHO = 40
@@ -75,14 +76,22 @@ def colidiu_com_mesa(novo_x, novo_y):
 
 
 def desenhar_cachorro(superficie):
-    metade = TAMANHO // 2
+    xc = int(x)
+    yc = int(y)
 
-    pontos = [
-        (x - metade, y - metade),
-        (x + metade, y - metade),
-        (x + metade, y + metade),
-        (x - metade, y + metade)
-    ]
+    # 🟤 Corpo
+    corpo = gerar_elipse(xc, yc, 30, 20, passos=100)
+    scanline_fill(superficie, corpo, MARROM)
+    desenhar_poligono(superficie, corpo, PRETO)
 
-    scanline_fill(superficie, pontos, MARROM)
-    desenhar_poligono(superficie, pontos, BRANCO)
+    # ⚫ Orelha
+    orelha = gerar_elipse(xc - 20, yc - 5, 10, 15, passos=80)
+    scanline_fill(superficie, orelha, (0, 0, 0))
+
+    # 👁 Olho
+    olho = gerar_elipse(xc - 8, yc - 2, 2, 2, passos=40)
+    scanline_fill(superficie, olho, (0, 0, 0))
+
+    # 👃 Nariz
+    nariz = gerar_elipse(xc + 25, yc, 4, 4, passos=40)
+    scanline_fill(superficie, nariz, (0, 0, 0))
