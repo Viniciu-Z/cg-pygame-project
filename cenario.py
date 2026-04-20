@@ -28,7 +28,7 @@ def desenhar_mesa(superficie, x, y):
     ]
 
     scanline_fill(superficie, pontos, CINZA)
-    desenhar_poligono(superficie, pontos, BRANCO)
+    desenhar_poligono(superficie, pontos, PRETO)
 
 
 def criar_cenario(largura, altura):

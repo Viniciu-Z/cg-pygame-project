@@ -1,6 +1,7 @@
 from funcoes import desenhar_poligono, scanline_fill, gerar_elipse
 from cenario import MESAS, LARGURA_MESA, ALTURA_MESA
 import pygame
+
 # Cores
 MARROM = (139, 69, 19)
 BRANCO = (255, 255, 255)
