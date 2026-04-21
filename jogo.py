@@ -3,14 +3,13 @@ import sys
 
 from cenario import criar_cenario, desenhar_cenario
 from cachorro import desenhar_cachorro, mover
-from temporizador import desenhar, atualizar
+from temporizador import desenhar as desenhar_tempo, atualizar
 from alimento import gerar_alimento, desenhar_alimento, colidiu_com_jogador
-import pontuacao  # 👈 novo
+import pontuacao
+
+PRETO = (0, 0, 0)
 
 pygame.init()
-
-# 🔤 inicializa fonte da pontuação
-pontuacao.iniciar()
 
 largura, altura = 1080, 720
 tela = pygame.display.set_mode((largura, altura))
@@ -18,15 +17,16 @@ pygame.display.set_caption("Pac Dog")
 
 relogio = pygame.time.Clock()
 
-PRETO = (0, 0, 0)
+# Inicializa sistemas
+pontuacao.iniciar()
 
-# 🔥 cria o cenário UMA vez só
+# Cria cenário
 criar_cenario(largura, altura)
 
-# 🍖 gera o alimento inicial
+# Gera primeiro alimento
 gerar_alimento(largura, altura)
 
-# ⏱️ estado do temporizador
+# Controle de tempo
 tempo_inicial = 10
 tempo_restante = tempo_inicial
 tempo_anterior = pygame.time.get_ticks()
@@ -36,19 +36,21 @@ rodando = True
 while rodando:
     relogio.tick(60)
 
+    # Eventos
     for evento in pygame.event.get():
         if evento.type == pygame.QUIT:
             rodando = False
 
+    # Entrada e movimento
     teclas = pygame.key.get_pressed()
     mover(teclas, largura, altura)
 
-    # 🍖 COLISÃO COM ALIMENTO
+    # Colisão com alimento
     if colidiu_com_jogador():
-        pontuacao.adicionar_ponto()  # 👈 soma pontos
+        pontuacao.adicionar_ponto()
         gerar_alimento(largura, altura)
 
-    # ⏱️ ATUALIZA O TEMPO
+    # Atualização do tempo
     tempo_anterior, tempo_restante, acabou = atualizar(
         tempo_anterior, tempo_restante, acabou
     )
@@ -56,18 +58,15 @@ while rodando:
     if acabou:
         rodando = False
 
-    # 🎨 DESENHO
+    # Renderização
     tela.fill(PRETO)
 
     desenhar_cenario(tela)
     desenhar_alimento(tela)
     desenhar_cachorro(tela)
 
-    # 🏆 DESENHA PONTUAÇÃO
     pontuacao.desenhar(tela)
-
-    # ⏱️ DESENHA TEMPORIZADOR
-    desenhar(tela, tempo_restante)
+    desenhar_tempo(tela, tempo_restante)
 
     pygame.display.flip()
 

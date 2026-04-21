@@ -1,8 +1,11 @@
+import math
+
 def setPixel(superficie, x, y, cor):
     if 0 <= x < superficie.get_width() and 0 <= y < superficie.get_height():
         superficie.set_at((x, y), cor)
 
 def bresenham(superficie, x0, y0, x1, y1, cor):
+    x0, y0, x1, y1 = int(x0), int(y0), int(x1), int(y1)
     # Flags para transformações
     steep = abs(y1 - y0) > abs(x1 - x0)
     if steep:
@@ -50,50 +53,44 @@ def desenhar_poligono(superficie, pontos, cor_borda):
         x1, y1 = pontos[(i + 1) % n]
         bresenham(superficie, x0, y0, x1, y1, cor_borda)
 
-def scanline_fill(superficie, pontos, cor_preenchimento):
-    # Encontra Y mínimo e máximo
+def scanline_fill(superficie, pontos, cor):
+    # 🔥 garante inteiros
+    pontos = [(int(x), int(y)) for (x, y) in pontos]
+
     ys = [p[1] for p in pontos]
-    y_min = min(ys)
-    y_max = max(ys)
+    y_min = int(min(ys))
+    y_max = int(max(ys))
 
     n = len(pontos)
 
     for y in range(y_min, y_max):
-        intersecoes_x = []
+        intersecoes = []
 
         for i in range(n):
             x0, y0 = pontos[i]
             x1, y1 = pontos[(i + 1) % n]
 
-            # Ignora arestas horizontais
             if y0 == y1:
                 continue
 
-            # Garante y0 < y1
             if y0 > y1:
                 x0, y0, x1, y1 = x1, y1, x0, y0
 
-            # Regra Ymin ≤ y < Ymax
             if y < y0 or y >= y1:
                 continue
 
-            # Calcula interseção
             x = x0 + (y - y0) * (x1 - x0) / (y1 - y0)
-            intersecoes_x.append(x)
+            intersecoes.append(x)
 
-        # Ordena interseções
-        intersecoes_x.sort()
+        intersecoes.sort()
 
-        # Preenche entre pares
-        for i in range(0, len(intersecoes_x), 2):
-            if i + 1 < len(intersecoes_x):
-                x_inicio = int(round(intersecoes_x[i]))
-                x_fim = int(round(intersecoes_x[i + 1]))
+        for i in range(0, len(intersecoes), 2):
+            if i + 1 < len(intersecoes):
+                x_ini = int(intersecoes[i])
+                x_fim = int(intersecoes[i + 1])
 
-                for x in range(x_inicio, x_fim + 1):
-                    setPixel(superficie, x, y, cor_preenchimento)
-
-import math
+                for x in range(x_ini, x_fim + 1):
+                    setPixel(superficie, x, y, cor)
 
 def gerar_elipse(xc, yc, rx, ry, passos=40):
     pontos = []
@@ -105,3 +102,59 @@ def gerar_elipse(xc, yc, rx, ry, passos=40):
         pontos.append((int(x), int(y)))
 
     return pontos
+
+def identidade():
+    return [
+        [1, 0, 0],
+        [0, 1, 0],
+        [0, 0, 1]
+    ]
+
+def translacao(tx, ty):
+    return [
+        [1, 0, tx],
+        [0, 1, ty],
+        [0, 0, 1]
+    ]
+
+def escala(sx, sy):
+    return [
+        [sx, 0, 0],
+        [0, sy, 0],
+        [0, 0, 1]
+    ]
+
+def rotacao(theta):
+    c = math.cos(theta)
+    s = math.sin(theta)
+    return [
+        [c, -s, 0],
+        [s,  c, 0],
+        [0,  0, 1]
+    ]
+
+def multiplica_matrizes(a, b):
+    r = [[0]*3 for _ in range(3)]
+
+    for i in range(3):
+        for j in range(3):
+            for k in range(3):
+                r[i][j] += a[i][k] * b[k][j]
+
+    return r
+
+def cria_transformacao():
+    return identidade()
+
+def aplica_transformacao(m, pontos):
+    novos = []
+
+    for x, y in pontos:
+        v = [x, y, 1]
+
+        x_novo = m[0][0]*v[0] + m[0][1]*v[1] + m[0][2]
+        y_novo = m[1][0]*v[0] + m[1][1]*v[1] + m[1][2]
+
+        novos.append((x_novo, y_novo))
+
+    return novos

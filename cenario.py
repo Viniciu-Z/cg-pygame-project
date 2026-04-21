@@ -15,7 +15,7 @@ MESAS = [
     (600, 410)
 ]
 
-# 🔥 superfície pré-renderizada
+# Superfície pré-renderizada do cenário
 cenario_surface = None
 
 

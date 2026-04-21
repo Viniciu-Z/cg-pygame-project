@@ -7,15 +7,16 @@ MARROM = (139, 69, 19)
 BRANCO = (255, 255, 255)
 PRETO = (0, 0, 0)
 
-# Tamanho
+# Tamanho do cachorro
 TAMANHO = 40
 
-# Posição inicial (centro)
+# Posição inicial (centro da tela)
 x = 540
 y = 360
 
-# Velocidade
+# Velocidade de movimento
 VELOCIDADE = 5
+
 
 def mover(teclas, largura_tela, altura_tela):
     global x, y
@@ -23,6 +24,7 @@ def mover(teclas, largura_tela, altura_tela):
     novo_x = x
     novo_y = y
 
+    # Entrada do jogador
     if teclas[pygame.K_w] or teclas[pygame.K_UP]:
         novo_y -= VELOCIDADE
     if teclas[pygame.K_s] or teclas[pygame.K_DOWN]:
@@ -44,15 +46,16 @@ def mover(teclas, largura_tela, altura_tela):
     if novo_y + metade > altura_tela:
         novo_y = altura_tela - metade
 
-    # 🔥 COLISÃO COM MESA
+    # Atualiza posição se não colidir com mesa
     if not colidiu_com_mesa(novo_x, novo_y):
         x = novo_x
         y = novo_y
 
+
 def colidiu_com_mesa(novo_x, novo_y):
     metade = TAMANHO // 2
 
-    # limites do cachorro
+    # Limites do cachorro
     cachorro_esq = novo_x - metade
     cachorro_dir = novo_x + metade
     cachorro_top = novo_y - metade
@@ -64,7 +67,7 @@ def colidiu_com_mesa(novo_x, novo_y):
         mesa_top = my
         mesa_bot = my + ALTURA_MESA
 
-        # teste de interseção de retângulos (AABB)
+        # Teste de colisão AABB
         if (
             cachorro_dir > mesa_esq and
             cachorro_esq < mesa_dir and
@@ -80,19 +83,19 @@ def desenhar_cachorro(superficie):
     xc = int(x)
     yc = int(y)
 
-    # 🟤 Corpo
+    # Corpo
     corpo = gerar_elipse(xc, yc, 30, 20, passos=100)
     scanline_fill(superficie, corpo, MARROM)
     desenhar_poligono(superficie, corpo, PRETO)
 
-    # ⚫ Orelha
+    # Orelha
     orelha = gerar_elipse(xc - 20, yc - 5, 10, 15, passos=80)
-    scanline_fill(superficie, orelha, (0, 0, 0))
+    scanline_fill(superficie, orelha, PRETO)
 
-    # 👁 Olho
+    # Olho
     olho = gerar_elipse(xc - 8, yc - 2, 2, 2, passos=40)
-    scanline_fill(superficie, olho, (0, 0, 0))
+    scanline_fill(superficie, olho, PRETO)
 
-    # 👃 Nariz
+    # Nariz
     nariz = gerar_elipse(xc + 25, yc, 4, 4, passos=40)
-    scanline_fill(superficie, nariz, (0, 0, 0))
+    scanline_fill(superficie, nariz, PRETO)

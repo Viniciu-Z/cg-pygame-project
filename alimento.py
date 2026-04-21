@@ -1,17 +1,20 @@
 import random
-from funcoes import gerar_elipse, scanline_fill, desenhar_poligono
+import math
+from funcoes import *
 from cenario import MESAS, LARGURA_MESA, ALTURA_MESA
 import cachorro
 
-# 🎨 Cor
 VERMELHO = (255, 0, 0)
-
-# 📏 Tamanho
 TAMANHO_ALIMENTO = 20
 
-# 📍 Posição inicial
+# Posição
 x = 0
 y = 0
+
+# Animação
+angulo = 0
+tempo = 0
+
 
 def gerar_alimento(largura_tela, altura_tela):
     global x, y
@@ -25,63 +28,69 @@ def gerar_alimento(largura_tela, altura_tela):
             y = novo_y
             break
 
+
 def dentro_da_mesa(px, py):
     for (mx, my) in MESAS:
         if (
-            px > mx and
-            px < mx + LARGURA_MESA and
-            py > my and
-            py < my + ALTURA_MESA
+            px > mx and px < mx + LARGURA_MESA and
+            py > my and py < my + ALTURA_MESA
         ):
             return True
     return False
 
+
 def perto_do_cachorro(px, py):
-    metade = TAMANHO // 2
+    metade = cachorro.TAMANHO // 2
 
     if (
-        px > dog_x - metade and
-        px < dog_x + metade and
-        py > dog_y - metade and
-        py < dog_y + metade
+        px > cachorro.x - metade and
+        px < cachorro.x + metade and
+        py > cachorro.y - metade and
+        py < cachorro.y + metade
     ):
         return True
 
     return False
 
-def desenhar_alimento(superficie):
-    pontos = gerar_elipse(x, y, TAMANHO_ALIMENTO // 2, TAMANHO_ALIMENTO // 2, passos=50)
-    scanline_fill(superficie, pontos, VERMELHO)
-    desenhar_poligono(superficie, pontos, (0, 0, 0))
 
-from cachorro import x as dog_x, y as dog_y, TAMANHO
+def desenhar_alimento(superficie):
+    global angulo, tempo
+
+    # Atualiza animação
+    angulo += 0.05
+    tempo += 0.08
+
+    escala_anim = 1.0 + 0.3 * math.sin(tempo)
+
+    # Elipse centrada na origem
+    pontos = gerar_elipse(0, 0, TAMANHO_ALIMENTO // 2, TAMANHO_ALIMENTO // 2, passos=50)
+
+    # Transformações: rotação, escala e translação
+    m = cria_transformacao()
+    m = multiplica_matrizes(translacao(0, 0), m)
+    m = multiplica_matrizes(rotacao(angulo), m)
+    m = multiplica_matrizes(escala(escala_anim, escala_anim), m)
+    m = multiplica_matrizes(translacao(x, y), m)
+
+    pontos_transformados = aplica_transformacao(m, pontos)
+
+    # Desenho
+    scanline_fill(superficie, pontos_transformados, VERMELHO)
+    desenhar_poligono(superficie, pontos_transformados, (0, 0, 0))
+
 
 def colidiu_com_jogador():
     metade_dog = cachorro.TAMANHO // 2
     metade_food = TAMANHO_ALIMENTO // 2
 
-    # pega posição ATUAL do cachorro
     dog_x = cachorro.x
     dog_y = cachorro.y
 
-    # bounding box do cachorro
-    dog_esq = dog_x - metade_dog
-    dog_dir = dog_x + metade_dog
-    dog_top = dog_y - metade_dog
-    dog_bot = dog_y + metade_dog
-
-    # bounding box do alimento
-    food_esq = x - metade_food
-    food_dir = x + metade_food
-    food_top = y - metade_food
-    food_bot = y + metade_food
-
-    # colisão AABB
     if (
-        dog_dir > food_esq and
-        dog_esq < food_dir and
-        dog_bot > food_top and
-        dog_top < food_bot
+        dog_x + metade_dog > x - metade_food and
+        dog_x - metade_dog < x + metade_food and
+        dog_y + metade_dog > y - metade_food and
+        dog_y - metade_dog < y + metade_food
     ):
         return True
 
