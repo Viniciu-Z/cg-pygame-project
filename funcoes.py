@@ -158,3 +158,18 @@ def aplica_transformacao(m, pontos):
         novos.append((x_novo, y_novo))
 
     return novos
+
+def janela_viewport(janela, viewport):
+    Wxmin, Wymin, Wxmax, Wymax = janela
+    Vxmin, Vymin, Vxmax, Vymax = viewport
+
+    sx = (Vxmax - Vxmin) / (Wxmax - Wxmin)
+    sy = (Vymin - Vymax) / (Wymax - Wymin)  # inversão do Y
+
+    m = identidade()
+
+    m = multiplica_matrizes(translacao(-Wxmin, -Wymin), m)
+    m = multiplica_matrizes(escala(sx, sy), m)
+    m = multiplica_matrizes(translacao(Vxmin, Vymax), m)
+
+    return m

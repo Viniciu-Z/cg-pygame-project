@@ -1,5 +1,6 @@
 import pygame
 import sys
+import viewport
 
 from cenario import criar_cenario, desenhar_cenario
 from cachorro import desenhar_cachorro, mover
@@ -27,7 +28,7 @@ criar_cenario(largura, altura)
 gerar_alimento(largura, altura)
 
 # Controle de tempo
-tempo_inicial = 10
+tempo_inicial = 50
 tempo_restante = tempo_inicial
 tempo_anterior = pygame.time.get_ticks()
 acabou = False
@@ -67,6 +68,7 @@ while rodando:
 
     pontuacao.desenhar(tela)
     desenhar_tempo(tela, tempo_restante)
+    viewport.desenhar_minimapa(tela, largura, altura)
 
     pygame.display.flip()
 
